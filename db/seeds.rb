@@ -10,6 +10,9 @@
 10.times do
   Idea.create(
     title: Faker::Tea.variety,
-    problem: Faker::Lorem.paragraph
+    problem: Faker::Lorem.paragraph,
+    rating: rand(6),
+    region: rand(8),
+    field: rand(6),
   )
 end
