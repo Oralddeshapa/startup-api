@@ -12,7 +12,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def create
-    @idea = Idea.new(idea_params)
+    @idea = Idea.create({:title => params[:title].to_s, :problem => params[:problem].to_s})
 
     if @idea.save
       render json: @idea, status: :created

@@ -16,3 +16,11 @@
     field: rand(6),
   )
 end
+
+10.times do
+  User.create(
+    username: Faker::Name.name,
+    password: Faker::Tea.variety,
+    email: Faker::Internet.email,
+  )
+end
