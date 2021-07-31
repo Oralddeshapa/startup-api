@@ -11,15 +11,51 @@ class Api::V1::UsersController < Api::V1::ApiController
     render json: @user
   end
 
-  def create
-    @user = User.create({:username => params[:username].to_s,
-                         :email => params[:email].to_s,
-                         :password => params[:password].to_s,})
+  def authorize
+    @user = User.find_by(email: params[:email], password: params[:password])
+    if !@user
 
-    if @user.save
-      render json: @user, status: :created
+      secret = Rails.application.credentials.jwt_token
+      payload = {
+        "email" => params[:email],
+        "password" => params[:password]
+      }
+
+      token = JWT.encode payload, secret, 'HS256'
+
+      #puts token
+
+      #decoded_token = JWT.decode token, secret, true, { algorithm: 'HS256' }
+
+      # Array
+      # [
+      #   {"data"=>"test"}, # payload
+      #   {"alg"=>"HS256"} # header
+      # ]
+      render :json => { :correct => true,
+                        :token => token }
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render :json => { :correct => false,
+                        :token => params }
+    end
+  end
+
+  def create
+    @user = User.find_by(email: params[:email]) || User.find_by(username: params[:username])
+    if !@user
+      @user = User.create({:username => params[:username].to_s,
+                           :email => params[:email].to_s,
+                           :password => params[:password].to_s,})
+
+      if @user.save
+        UserMailer.with(user: @user).succ_registered.deliver_later
+        render :json => { :msg => "Account was successfuly create" }
+      else
+        render :json => { :msg => "Error happened duing account creating try again later" }
+      end
+
+    else
+      render :json => { :msg => "Name or email has already been taken" }
     end
   end
 
