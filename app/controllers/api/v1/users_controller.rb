@@ -13,7 +13,7 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def authorize
     @user = User.find_by(email: params[:email], password: params[:password])
-    if !@user
+    unless @user
 
       secret = Rails.application.credentials.jwt_token
       payload = {
@@ -32,30 +32,29 @@ class Api::V1::UsersController < Api::V1::ApiController
       #   {"data"=>"test"}, # payload
       #   {"alg"=>"HS256"} # header
       # ]
-      render :json => { :correct => true,
-                        :token => token }
+      render :json => { correct: true,
+                        token:   token }
     else
-      render :json => { :correct => false,
-                        :token => params }
+      render :json => { correct: false,
+                        token:   params }
     end
   end
 
   def create
     @user = User.find_by(email: params[:email]) || User.find_by(username: params[:username])
-    if !@user
-      @user = User.create({:username => params[:username].to_s,
-                           :email => params[:email].to_s,
-                           :password => params[:password].to_s,})
+    unless @user
+      @user = User.new(user_params)
 
       if @user.save
         UserMailer.with(user: @user).succ_registered.deliver_later
-        render :json => { :msg => "Account was successfuly create" }
+        render :json => { msg: "Account was successfuly create" }
       else
-        render :json => { :msg => "Error happened duing account creating try again later" }
+        render :json => { msg: "Error happened duing account creating try again later" }
       end
 
     else
-      render :json => { :msg => "Name or email has already been taken" }
+      render :json => { msg: "Name or email has already been taken",
+                        error_code: "400"}
     end
   end
 

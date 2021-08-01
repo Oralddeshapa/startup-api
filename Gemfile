@@ -26,6 +26,8 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'faker'
 
+gem 'dotenv-rails'
+
 gem 'active_model_serializers'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
