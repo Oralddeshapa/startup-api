@@ -1,5 +1,7 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :set_user, only: %i[show update destroy]
+  before_action :is_authorized?, only: %i[index]
+  skip_before_action :is_authorized?, only: %i[authorize]
 
   def index
     @users = User.all
@@ -13,31 +15,22 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def authorize
     @user = User.find_by(email: params[:email], password: params[:password])
-    unless @user
 
+    if @user
       secret = Rails.application.credentials.jwt_token
       payload = {
         "email" => params[:email],
         "password" => params[:password]
       }
-
       token = JWT.encode payload, secret, 'HS256'
-
-      #puts token
-
-      #decoded_token = JWT.decode token, secret, true, { algorithm: 'HS256' }
-
-      # Array
-      # [
-      #   {"data"=>"test"}, # payload
-      #   {"alg"=>"HS256"} # header
-      # ]
-      render :json => { correct: true,
-                        token:   token }
+      correct = true
     else
-      render :json => { correct: false,
-                        token:   params }
+      token = nil
+      correct = false
     end
+
+    render :json => { correct: correct,
+                      token:   token }
   end
 
   def create
@@ -46,7 +39,7 @@ class Api::V1::UsersController < Api::V1::ApiController
       @user = User.new(user_params)
 
       if @user.save
-        UserMailer.with(user: @user).succ_registered.deliver_later
+        #UserMailer.with(user: @user).succ_registered.deliver_later
         render :json => { msg: "Account was successfuly create" }
       else
         render :json => { msg: "Error happened duing account creating try again later" }

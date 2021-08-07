@@ -22,5 +22,6 @@ end
     username: Faker::Name.name,
     password: Faker::Tea.variety,
     email: Faker::Internet.email,
+    role: rand(2),
   )
 end

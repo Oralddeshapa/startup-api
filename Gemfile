@@ -26,6 +26,8 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'faker'
 
+gem 'cancancan'
+
 gem 'dotenv-rails'
 
 gem 'active_model_serializers'
