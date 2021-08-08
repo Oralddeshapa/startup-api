@@ -8,20 +8,19 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 10.times do
-  Idea.create(
+  user = User.create(
+    username: Faker::Name.first_name,
+    password: Faker::Code.nric,
+    email: Faker::Internet.email,
+    role: rand(2),
+  )
+  user.save
+  idea = user.ideas.create(
     title: Faker::Tea.variety,
     problem: Faker::Lorem.paragraph,
     rating: rand(6),
     region: rand(8),
     field: rand(6),
   )
-end
-
-10.times do
-  User.create(
-    username: Faker::Name.name,
-    password: Faker::Tea.variety,
-    email: Faker::Internet.email,
-    role: rand(2),
-  )
+  idea.save
 end

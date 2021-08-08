@@ -19,8 +19,9 @@ class Api::V1::UsersController < Api::V1::ApiController
     if @user
       secret = Rails.application.credentials.jwt_token
       payload = {
-        "email" => params[:email],
-        "password" => params[:password]
+        :email => params[:email],
+        :password => params[:password],
+        :role => @user.role
       }
       token = JWT.encode payload, secret, 'HS256'
       correct = true
@@ -70,6 +71,6 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def user_params
-    params.require(:user).permit(:username, :email, :password)
+    params.require(:user).permit(:username, :email, :password, :role)
   end
 end
