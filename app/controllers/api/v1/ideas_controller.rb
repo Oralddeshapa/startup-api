@@ -1,6 +1,6 @@
 class Api::V1::IdeasController < Api::V1::ApiController
   before_action :set_idea, only: %i[show update destroy]
-  before_action :is_authorized?
+  load_and_authorize_resource
 
   def index
     @ideas = Idea.all
@@ -41,5 +41,9 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def idea_params
     params.require(:idea).permit(:title, :problem)
+  end
+
+  def current_user
+    @current_user
   end
 end

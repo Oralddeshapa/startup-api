@@ -1,7 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :set_user, only: %i[show update destroy]
-  before_action :is_authorized?, only: %i[index]
-  skip_before_action :is_authorized?, only: %i[authorize]
+  skip_before_action :authorized?, only: %i[authorize]
 
   def index
     @users = User.all
@@ -24,14 +23,10 @@ class Api::V1::UsersController < Api::V1::ApiController
         :role => @user.role
       }
       token = JWT.encode payload, secret, 'HS256'
-      correct = true
+      render :json => { token: token }, status: 200
     else
-      token = nil
-      correct = false
+      render :json => { error: 'wrong email or password' }, status: 400
     end
-
-    render :json => { correct: correct,
-                      token:   token }
   end
 
   def create
@@ -41,14 +36,13 @@ class Api::V1::UsersController < Api::V1::ApiController
 
       if @user.save
         #UserMailer.with(user: @user).succ_registered.deliver_later
-        render :json => { msg: "Account was successfuly create" }
+        render :json => {}, status: 200
       else
-        render :json => { msg: "Error happened duing account creating try again later" }
+        render :json => { error: 'something went wrong pls try again' }, status: 422
       end
 
     else
-      render :json => { msg: "Name or email has already been taken",
-                        error_code: "400"}
+      render json: { error: 'name or email has been taken' }, status: 400
     end
   end
 
@@ -56,7 +50,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     if @user.update(user_params)
       render json: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render_errors(user)
     end
   end
 

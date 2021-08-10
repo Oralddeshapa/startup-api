@@ -5,8 +5,13 @@ class Ability
 
   def initialize(user)
     user ||= User.new
-
-    can :read, Idea, active: true
-    can [:read, :create, :update, :destroy], Post, user_id: user.id
+    if user.creator?
+      can :read, Idea, active: true
+    end
+    if user.investor?
+      #byebug
+    end
+    #can :read, Idea, active: true
+    #can [:read, :create, :update, :destroy], Idea, user_id: user.id
   end
 end
