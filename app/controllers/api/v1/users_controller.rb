@@ -14,7 +14,6 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def authorize
     @user = User.find_by(email: params[:email], password: params[:password])
-
     if @user
       secret = Rails.application.credentials.jwt_token
       payload = {
@@ -23,7 +22,8 @@ class Api::V1::UsersController < Api::V1::ApiController
         :role => @user.role
       }
       token = JWT.encode payload, secret, 'HS256'
-      render :json => { token: token }, status: 200
+      render :json => { token: token,
+                        username: @user.username }, status: 200
     else
       render :json => { error: 'wrong email or password' }, status: 400
     end

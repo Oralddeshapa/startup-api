@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :ideas, :users
       post 'authorize' => "users#authorize"
+      get 'get_fields' => "ideas#get_fields"
     end
   end
 end

@@ -7,6 +7,8 @@ class Ability
     user ||= User.new
     if user.creator?
       can :read, Idea, active: true
+      can :get_fields, Idea
+      can :create, Idea
     end
     if user.investor?
       #byebug
