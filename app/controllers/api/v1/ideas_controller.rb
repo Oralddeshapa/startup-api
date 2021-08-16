@@ -1,12 +1,11 @@
 class Api::V1::IdeasController < Api::V1::ApiController
-  before_action :set_idea, only: %i[show update destroy]
   load_and_authorize_resource
 
   def index
     if @current_user.investor?
       @ideas = Idea.all
     elsif @current_user.creator?
-      @ideas = Idea.where(user_id: @current_user.id)
+      @ideas = @current_ideas.ideas
     end
     render json: @ideas
   end
@@ -28,7 +27,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.rating = 0
 
     if @idea.save
-      render :json => {}, status: 200
+      render :json => { head :ok }, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end

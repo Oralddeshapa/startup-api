@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :set_user, only: %i[show update destroy]
   skip_before_action :authorized?, only: %i[authorize]
+  load_and_authorize_resource
 
   def index
     @users = User.all
@@ -33,7 +33,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     @user = User.find_by(email: params[:email]) || User.find_by(username: params[:username])
     unless @user
       @user = User.new(user_params)
-
+      byebug
       if @user.save
         #UserMailer.with(user: @user).succ_registered.deliver_later
         render :json => {}, status: 200

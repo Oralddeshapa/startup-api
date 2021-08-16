@@ -9,8 +9,11 @@ class Ability
       can :read, Idea, active: true
       can :get_fields, Idea
       can :create, Idea
+      can :show, Idea
     end
     if user.investor?
+      can :read, Idea
+      can :show, Idea #change later
       #byebug
     end
     #can :read, Idea, active: true
