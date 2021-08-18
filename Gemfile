@@ -32,6 +32,8 @@ gem 'dotenv-rails'
 
 gem 'active_model_serializers'
 
+gem 'activeadmin'
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
