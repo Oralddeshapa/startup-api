@@ -5,6 +5,7 @@ ActiveAdmin.setup do |config|
   # for each of the active admin pages.
   #
   config.site_title = "Startup Api"
+  ENV['LOCAL_DEPLOY_URL_ADMIN'] = "http://localhost:3000/admin"
 
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.

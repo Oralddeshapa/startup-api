@@ -34,6 +34,15 @@ gem 'active_model_serializers'
 
 gem 'activeadmin'
 
+gem 'arbre'
+
+group :assets do
+    gem 'sass-rails'
+    gem 'coffee-rails'
+    gem 'uglifier'
+    gem 'bootstrap-sass'
+end
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
