@@ -8,8 +8,20 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 10.times do
-  Idea.create(
-    title: Faker::Tea.variety,
-    problem: Faker::Lorem.paragraph
+  user = User.create(
+    username: Faker::Name.first_name,
+    password: Faker::Code.nric,
+    email: Faker::Internet.email,
+    role: rand(2),
   )
+  user.save
+  idea = user.ideas.create(
+    title: Faker::Tea.variety,
+    problem: Faker::Lorem.paragraph,
+    rating: rand(6),
+    region: rand(8),
+    field: rand(6),
+  )
+  idea.save
 end
+AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?

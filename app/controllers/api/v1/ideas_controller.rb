@@ -1,10 +1,20 @@
 class Api::V1::IdeasController < Api::V1::ApiController
-  before_action :set_idea, only: %i[show update destroy]
+  load_and_authorize_resource
 
   def index
-    @ideas = Idea.all
-
+    if @current_user.investor?
+      @ideas = Idea.all
+    elsif @current_user.creator?
+      @ideas = @current_ideas.ideas
+    end
     render json: @ideas
+  end
+
+  def get_fields
+    regions = Idea.regions.keys
+    fields = Idea.fields.keys
+    render :json => { regions: regions,
+                      fields: fields }, status: 200
   end
 
   def show
@@ -13,11 +23,13 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def create
     @idea = Idea.new(idea_params)
+    @idea.user_id = current_user.id
+    @idea.rating = 0
 
     if @idea.save
-      render json: @idea, status: :created
+      render :json => { head :ok }, status: 200
     else
-      render json: @idea.errors, status: :unprocessable_entity
+      render :json => { error: 'something went wrong pls try again' }, status: 422
     end
   end
 
@@ -40,6 +52,10 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def idea_params
-    params.require(:idea).permit(:title, :problem)
+    params.require(:idea).permit(:title, :problem, :field, :region)
+  end
+
+  def current_user
+    @current_user
   end
 end

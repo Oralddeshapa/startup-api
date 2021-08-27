@@ -26,10 +26,29 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'faker'
 
+gem 'cancancan'
+
+gem 'dotenv-rails'
+
 gem 'active_model_serializers'
+
+gem 'activeadmin'
+
+gem 'arbre'
+
+group :assets do
+    gem 'sass-rails'
+    gem 'coffee-rails'
+    gem 'uglifier'
+    gem 'bootstrap-sass'
+end
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+
+gem 'devise'
+
+gem 'jwt'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
