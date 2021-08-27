@@ -1,15 +1,14 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  skip_before_action :authorized?, only: %i[authorize]
+  skip_before_action :authorized?, only: %i[authorize, create]
   load_and_authorize_resource
 
   def index
     @users = User.all
-
-    render json: @users
+    render json: @users, status: 200
   end
 
   def show
-    render json: @user
+    render json: @user, status: 200
   end
 
   def authorize
@@ -33,7 +32,6 @@ class Api::V1::UsersController < Api::V1::ApiController
     @user = User.find_by(email: params[:email]) || User.find_by(username: params[:username])
     unless @user
       @user = User.new(user_params)
-      byebug
       if @user.save
         #UserMailer.with(user: @user).succ_registered.deliver_later
         render :json => {}, status: 200
@@ -66,5 +64,9 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def user_params
     params.require(:user).permit(:username, :email, :password, :role)
+  end
+
+  def current_user
+    @current_user
   end
 end

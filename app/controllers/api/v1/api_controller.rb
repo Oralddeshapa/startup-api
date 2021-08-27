@@ -9,7 +9,7 @@ class Api::V1::ApiController < ActionController::API
         user = User.find_by(email: decoded_token["email"], password: decoded_token["password"])
         @current_user = user
         unless @current_user
-          render json: { error: 'wrong email or password' }, status: 401
+          render json: { error: 'wrong email or password' }, status: 402
         end
       end
     rescue JWT::DecodeError

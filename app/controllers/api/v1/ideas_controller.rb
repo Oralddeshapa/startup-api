@@ -5,7 +5,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     if @current_user.investor?
       @ideas = Idea.all
     elsif @current_user.creator?
-      @ideas = @current_ideas.ideas
+      @ideas = Idea.where(user_id: @current_user.id)
     end
     render json: @ideas
   end
@@ -27,7 +27,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.rating = 0
 
     if @idea.save
-      render :json => { head :ok }, status: 200
+      render :json => { head: :ok }, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end
