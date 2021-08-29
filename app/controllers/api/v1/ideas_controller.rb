@@ -5,7 +5,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     if @current_user.investor?
       @ideas = Idea.all
     elsif @current_user.creator?
-      @ideas = Idea.where(user_id: @current_user.id)
+      @ideas = current_user.ideas
     end
     render json: @ideas
   end
@@ -27,7 +27,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.rating = 0
 
     if @idea.save
-      render :json => { head: :ok }, status: 200
+      head :ok 
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end
@@ -53,9 +53,5 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def idea_params
     params.require(:idea).permit(:title, :problem, :field, :region)
-  end
-
-  def current_user
-    @current_user
   end
 end

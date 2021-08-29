@@ -1,6 +1,5 @@
 ActiveAdmin.register Idea do
-  permit_params :user_id, :title, :problem, :rating, :field, :region
-
+  
   form do |f|
     inputs "Details" do
       input :user

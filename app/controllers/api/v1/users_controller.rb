@@ -4,11 +4,11 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def index
     @users = User.all
-    render json: @users, status: 200
+    render json: @users
   end
 
   def show
-    render json: @user, status: 200
+    render json: @user
   end
 
   def authorize
@@ -64,9 +64,5 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def user_params
     params.require(:user).permit(:username, :email, :password, :role)
-  end
-
-  def current_user
-    @current_user
   end
 end

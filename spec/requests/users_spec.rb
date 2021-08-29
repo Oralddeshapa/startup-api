@@ -1,33 +1,37 @@
 require 'rails_helper'
+include RequestHelper
 
 RSpec.describe Api::V1::UsersController, type: :controller do
-  before(:all) {
-    @user = User.new(
-      username: Faker::Name.first_name,
-      password: Faker::Internet.email,
-      email: Faker::Code.nric,
-      role: 'temporary_role',
-    )
-    @user.save
+
+  let (:user) { create(:user) }
+
+  def generate_token
     secret = Rails.application.credentials.jwt_token
     payload = {
-      :email => @user.email,
-      :password => @user.password,
-      :role => @user.role
+      :email => user.email,
+      :password => user.password,
+      :role => user.role
     }
-    @token = JWT.encode payload, secret, 'HS256'
-  }
+    token = JWT.encode payload, secret, 'HS256'
+  end
+
+  let (:token) { generate_token }
+
   context 'with authorized user' do
+    # before(:all) {
+    #   login(user)
+    # }
+
     describe "GET /index" do
       it 'returns a success response' do
-        get :index, :params => { :token => @token }
+        get :index, :params => { :token => token }
         expect(response.status).to eq(200)
       end
     end
 
     describe "GET /show" do
       it 'returns a success response' do
-        get :show, :params => { :id => @user.id, :token => @token }
+        get :show, :params => { :id => user.id, :token => token }
         expect(response.status).to eq(200)
       end
     end
@@ -35,8 +39,8 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     describe "POST /authorize" do
       it 'returns a success response' do
         post :authorize, :params => {
-          :email => @user.email,
-          :password => @user.password
+          :email => user.email,
+          :password => user.password
         }
         expect(response.status).to eq(200)
       end
@@ -45,14 +49,14 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     describe "GET /update" do
       it 'returns a success response' do
         post :update, :params => {
-          :token => @token,
+          :token => token,
           :user => {
             :username => Faker::Name.first_name,
             :password => Faker::Internet.email,
             :email => Faker::Code.nric,
             :role => 'temporary_role',
           },
-          :id => @user.id
+          :id => user.id
         }
         expect(response.status).to eq(200)
       end
@@ -83,7 +87,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
 
     describe "GET /show" do
       it 'returns a success response' do
-        get :show, :params => { :id => @user.id, :token => nil }
+        get :show, :params => { :id => user.id, :token => nil }
         expect(response.status).to eq(401)
       end
     end
@@ -98,7 +102,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
             :email => Faker::Code.nric,
             :role => 'temporary_role',
           },
-          :id => @user.id
+          :id => user.id
         }
         expect(response.status).to eq(401)
       end
