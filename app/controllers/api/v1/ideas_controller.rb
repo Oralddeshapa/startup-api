@@ -2,9 +2,9 @@ class Api::V1::IdeasController < Api::V1::ApiController
   load_and_authorize_resource
 
   def index
-    if @current_user.investor?
+    if current_user.investor?
       @ideas = Idea.all
-    elsif @current_user.creator?
+    elsif current_user.creator?
       @ideas = current_user.ideas
     end
     render json: @ideas
@@ -27,7 +27,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.rating = 0
 
     if @idea.save
-      head :ok 
+      head :ok
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end

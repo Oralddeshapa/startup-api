@@ -1,4 +1,4 @@
-require 'rails_helper'
+require File.expand_path('./spec/request_helper.rb')
 
 RSpec.describe Api::V1::IdeasController, type: :controller do
 
@@ -7,21 +7,13 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
     let (:user) { create(:user, role: 'creator') }
     let (:idea) { create(:idea, user_id: user.id) }
 
-    def generate_token
-      secret = Rails.application.credentials.jwt_token
-      payload = {
-        :email => user.email,
-        :password => user.password,
-        :role => user.role
-      }
-      token = JWT.encode payload, secret, 'HS256'
-    end
-
-    let (:token) { generate_token }
+    before {
+      login(user)
+    }
 
     describe "GET /index" do
       it 'returns a success response' do
-        get :index, :params => { :token => token, :id => user.id }
+        get :index, :params => { :id => user.id }
         resp = response.body
         data = ActiveModelSerializers::SerializableResource.new(user.ideas)
         data = data.to_json
@@ -31,7 +23,7 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
 
     describe "GET /show" do
       it 'returns a success response' do
-        get :show, :params => { :id => idea.id, :token => token }
+        get :show, :params => { :id => idea.id }
         data = ActiveModelSerializers::SerializableResource.new(idea).to_json
         expect(response.body).to eq(data)
       end
@@ -39,7 +31,7 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
 
     describe "POST /get_fields" do
       it 'returns a success response' do
-        post :get_fields, :params => { :token => token }
+        post :get_fields
         data = { regions: Idea.regions.keys, fields: Idea.fields.keys }
         data = data.to_json
         expect(response.body).to eq(data)
@@ -49,7 +41,6 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
     describe "GET /create" do
       it 'returns a success response' do
         post :create, :params => {
-          :token => token,
           :idea => {
             :title => Faker::Tea.variety,
             :problem => Faker::Lorem.paragraph,
@@ -67,21 +58,13 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
     let (:user) { create(:user, role: 'investor') }
     let (:idea) { create(:idea, user_id: user.id) }
 
-    def generate_token
-      secret = Rails.application.credentials.jwt_token
-      payload = {
-        :email => user.email,
-        :password => user.password,
-        :role => user.role
-      }
-      token = JWT.encode payload, secret, 'HS256'
-    end
-
-    let (:token) { generate_token }
+    before {
+      login(user)
+    }
 
     describe "GET /index" do
       it 'returns a success response' do
-        get :index, :params => { :token => token }
+        get :index
         resp = response.body
         data = ActiveModelSerializers::SerializableResource.new(Idea.all)
         data = data.to_json
@@ -91,7 +74,7 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
 
     describe "GET /show" do
       it 'returns a success response' do
-        get :show, :params => { :id => idea.id, :token => token }
+        get :show, :params => { :id => idea.id }
         data = ActiveModelSerializers::SerializableResource.new(idea).to_json
         expect(response.body).to eq(data)
       end
@@ -99,7 +82,7 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
 
     describe "POST /get_fields" do
       it 'returns a success response' do
-        post :get_fields, :params => { :token => token }
+        post :get_fields
         data = { regions: Idea.regions.keys, fields: Idea.fields.keys }
         data = data.to_json
         expect(response.body).to eq(data)

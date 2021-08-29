@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe User, type: :model do
   describe 'vailidations' do
     it 'ensures email is present & correct' do

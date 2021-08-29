@@ -1,37 +1,24 @@
-require 'rails_helper'
-include RequestHelper
+require File.expand_path('./spec/request_helper.rb')
 
 RSpec.describe Api::V1::UsersController, type: :controller do
 
   let (:user) { create(:user) }
 
-  def generate_token
-    secret = Rails.application.credentials.jwt_token
-    payload = {
-      :email => user.email,
-      :password => user.password,
-      :role => user.role
-    }
-    token = JWT.encode payload, secret, 'HS256'
-  end
-
-  let (:token) { generate_token }
-
   context 'with authorized user' do
-    # before(:all) {
-    #   login(user)
-    # }
+    before {
+      login(user)
+    }
 
     describe "GET /index" do
       it 'returns a success response' do
-        get :index, :params => { :token => token }
+        get :index
         expect(response.status).to eq(200)
       end
     end
 
     describe "GET /show" do
       it 'returns a success response' do
-        get :show, :params => { :id => user.id, :token => token }
+        get :show, :params => { :id => user.id }
         expect(response.status).to eq(200)
       end
     end
@@ -49,7 +36,6 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     describe "GET /update" do
       it 'returns a success response' do
         post :update, :params => {
-          :token => token,
           :user => {
             :username => Faker::Name.first_name,
             :password => Faker::Internet.email,
@@ -64,6 +50,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
   end
 
   context 'with unauthorized user' do
+
     describe "POST /create" do
       it 'returns a success response' do
         post :create, :params => {
