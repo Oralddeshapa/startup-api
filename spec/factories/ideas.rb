@@ -3,7 +3,7 @@ FactoryBot.define do
     title { Faker::Tea.variety }
     problem { Faker::Lorem.paragraph }
     rating { 1 }
-    region { 1 }
-    field { 1 }
+    region { 'RU' }
+    field { "science" }
   end
 end

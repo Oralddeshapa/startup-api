@@ -3,7 +3,6 @@ require 'request_helper'
 RSpec.describe Api::V1::UsersController, type: :controller do
 
   let (:user) { create(:user) }
-  before {  }
 
   context 'with authorized user' do
     before { login(user) }
