@@ -6,9 +6,6 @@ class Ability
   def initialize(user)
     user ||= User.new
     can [:authorize, :create], User
-    if user.temporary_role?
-      can [:read, :show, :update], User
-    end
     if user.creator?
       can [:read, :update], Idea, active: true, user: user
       can [:get_fields, :create, :show], Idea

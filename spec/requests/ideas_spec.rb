@@ -1,15 +1,13 @@
-require File.expand_path('./spec/request_helper.rb')
+require 'request_helper'
 
 RSpec.describe Api::V1::IdeasController, type: :controller do
 
   context 'with creator user' do
 
-    let (:user) { create(:user, role: 'creator') }
-    let (:idea) { create(:idea, user_id: user.id) }
+    let(:user) { create(:user, role: 'creator') }
+    let(:idea) { create(:idea, user_id: user.id) }
 
-    before {
-      login(user)
-    }
+    before { login(user) }
 
     describe "GET /index" do
       it 'returns a success response' do
@@ -51,16 +49,26 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
         }
         expect(response.status).to eq(200)
       end
+
+      it 'changes amount of ideas' do
+        expect { post :create, :params => {
+          :idea => {
+            :title => Faker::Tea.variety,
+            :problem => Faker::Lorem.paragraph,
+            :rating => rand(6),
+            :region => Idea.regions.keys[rand(8)],
+            :field => Idea.fields.keys[rand(6)],
+          }
+        }}.to change { Idea.count }.by 1
+      end
     end
   end
 
   context 'with investor user' do
-    let (:user) { create(:user, role: 'investor') }
-    let (:idea) { create(:idea, user_id: user.id) }
+    let(:user) { create(:user, role: 'investor') }
+    let(:idea) { create(:idea, user_id: user.id) }
 
-    before {
-      login(user)
-    }
+    before { login(user) }
 
     describe "GET /index" do
       it 'returns a success response' do
