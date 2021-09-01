@@ -37,10 +37,10 @@ gem 'activeadmin'
 gem 'arbre'
 
 group :assets do
-    gem 'sass-rails'
-    gem 'coffee-rails'
-    gem 'uglifier'
-    gem 'bootstrap-sass'
+  gem 'sass-rails'
+  gem 'coffee-rails'
+  gem 'uglifier'
+  gem 'bootstrap-sass'
 end
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
@@ -53,6 +53,9 @@ gem 'jwt'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'rspec-rails'
+  gem 'database_cleaner-active_record'
+  gem 'factory_bot_rails'
 end
 
 group :development do

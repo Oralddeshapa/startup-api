@@ -1,5 +1,6 @@
 class Api::V1::ApiController < ActionController::API
   before_action :authorized?
+  attr_reader :current_user
 
   def authorized?
     begin

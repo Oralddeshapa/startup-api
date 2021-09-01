@@ -2,10 +2,10 @@ class Api::V1::IdeasController < Api::V1::ApiController
   load_and_authorize_resource
 
   def index
-    if @current_user.investor?
+    if current_user.investor?
       @ideas = Idea.all
-    elsif @current_user.creator?
-      @ideas = @current_ideas.ideas
+    elsif current_user.creator?
+      @ideas = current_user.ideas
     end
     render json: @ideas
   end
@@ -27,7 +27,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.rating = 0
 
     if @idea.save
-      render :json => { head :ok }, status: 200
+      head :ok
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end
@@ -53,9 +53,5 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def idea_params
     params.require(:idea).permit(:title, :problem, :field, :region)
-  end
-
-  def current_user
-    @current_user
   end
 end

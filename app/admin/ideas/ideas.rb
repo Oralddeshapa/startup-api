@@ -1,6 +1,5 @@
 ActiveAdmin.register Idea do
-  permit_params :title, :problem, :rating, :field, :region
-
+  
   form do |f|
     inputs "Details" do
       input :user
@@ -24,12 +23,11 @@ ActiveAdmin.register Idea do
       else
         flash[:success] = "New Idea createdn't."
       end
-      byebug
       redirect_to ENV['LOCAL_DEPLOY_URL_ADMIN'] + '/ideas'
     end
 
     def idea_params
-      params.require(:idea).permit(:user_id, :title, :problem, :field, :region)
+      permitted_params.require(:idea).permit(:user_id, :title, :problem, :field, :region)
     end
   end
 
