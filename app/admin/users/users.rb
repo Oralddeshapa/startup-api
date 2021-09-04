@@ -19,7 +19,9 @@ ActiveAdmin.register User do
     def create
       @user = User.find_by(email: permitted_params[:email]) || User.find_by(username: permitted_params[:username])
       unless @user
+        byebug
         @user = User.new(user_params)
+        byebug
         if @user.save
           flash[:success] = "New User created."
         else
