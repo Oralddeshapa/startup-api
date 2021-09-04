@@ -15,8 +15,14 @@ class Ability
       can :update, User
       can [:read, :get_fields, :show], Idea
     end
-    if user.admin?
-      can :manage, :all
-    end
+  end
+end
+
+class AbilityAdmin
+  include CanCan::Ability
+
+  def initialize(user)
+    user ||= User.new
+    can :manage, :all
   end
 end
