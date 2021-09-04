@@ -1,5 +1,5 @@
 ActiveAdmin.register Idea do
-  
+
   form do |f|
     inputs "Details" do
       input :user
@@ -23,7 +23,7 @@ ActiveAdmin.register Idea do
       else
         flash[:success] = "New Idea createdn't."
       end
-      redirect_to ENV['LOCAL_DEPLOY_URL_ADMIN'] + '/ideas'
+      redirect_to ENV['DEPLOY_URL_ADMIN'] + '/ideas'
     end
 
     def idea_params
