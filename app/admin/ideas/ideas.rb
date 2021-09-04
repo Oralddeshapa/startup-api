@@ -1,4 +1,5 @@
 ActiveAdmin.register Idea do
+  permit_params :user_id, :title, :field, :region, :problem
 
   form do |f|
     inputs "Details" do
@@ -18,6 +19,7 @@ ActiveAdmin.register Idea do
 
     def create
       @idea = Idea.new(idea_params)
+      @idea.rating = 0
       if @idea.save
         flash[:success] = "New Idea created."
       else
