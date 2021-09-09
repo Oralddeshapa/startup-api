@@ -27,7 +27,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.rating = 0
 
     if @idea.save
-      head :ok
+      render :json => { id: @idea.id }, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end
