@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_18_172429) do
+ActiveRecord::Schema.define(version: 2021_09_07_125524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,9 @@ ActiveRecord::Schema.define(version: 2021_08_18_172429) do
     t.integer "field"
     t.integer "region"
     t.integer "user_id"
+    t.boolean "is_active", default: true
+    t.integer "views", default: 0
+    t.datetime "close_data", precision: 6, default: "2021-10-08 08:58:07"
   end
 
   create_table "users", force: :cascade do |t|
