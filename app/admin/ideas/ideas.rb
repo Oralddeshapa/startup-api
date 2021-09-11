@@ -25,7 +25,7 @@ ActiveAdmin.register Idea do
       else
         flash[:success] = "New Idea createdn't."
       end
-      redirect_to ENV['DEPLOY_URL_ADMIN'] + '/ideas'
+      redirect_to request.fullpath
     end
 
     def idea_params
