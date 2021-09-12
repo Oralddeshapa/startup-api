@@ -7,7 +7,7 @@ class Ability
     user ||= User.new
     can [:authorize, :create], User
     if user.creator?
-      can [:read, :update], Idea, active: true, user: user
+      can [:read, :update, :destroy], Idea, user: user
       can [:get_fields, :create, :show], Idea
       can :update, User
     end

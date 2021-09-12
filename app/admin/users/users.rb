@@ -28,7 +28,7 @@ ActiveAdmin.register User do
       else
         flash[:success] = "New User createdn't."
       end
-      redirect_to (ENV['LOCAL_DEPLOY_URL_ADMIN'] + '/users')
+      redirect_to request.fullpath
     end
 
     def user_params

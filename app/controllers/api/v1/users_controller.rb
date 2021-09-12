@@ -21,7 +21,8 @@ class Api::V1::UsersController < Api::V1::ApiController
         :role => @user.role
       }
       token = JWT.encode payload, secret, 'HS256'
-      render :json => { token: token,
+      render :json => { role: @user.role, 
+                        token: token,
                         username: @user.username }, status: 200
     else
       render :json => { error: 'wrong email or password' }, status: 400
