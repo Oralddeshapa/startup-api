@@ -5,4 +5,5 @@ class Idea < ApplicationRecord
   enum field: [:science, :economy, :politics, :food, :service, :transport] #6
   enum region: [:EU, :RU, :ZA, :NA, :SA, :AU, :CN, :JP] #8
   belongs_to :user
+  has_many :comments 
 end
