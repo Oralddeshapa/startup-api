@@ -25,7 +25,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea = Idea.new(idea_params)
     @idea.user_id = current_user.id
     @idea.rating = 0
-
+    @idea.close_date = Time.now + 30.days
     if @idea.save
       render :json => { id: @idea.id }, status: 200
     else
