@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   namespace :api do
     namespace :v1 do
-      resources :ideas, :users
+      resources :ideas, :users, :comments
       post 'authorize' => "users#authorize"
       get 'get_fields' => "ideas#get_fields"
     end
