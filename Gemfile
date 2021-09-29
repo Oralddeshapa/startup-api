@@ -28,6 +28,8 @@ gem 'faker'
 
 gem 'cancancan'
 
+gem 'sidekiq'
+
 gem 'dotenv-rails'
 
 gem 'active_model_serializers'
@@ -35,6 +37,8 @@ gem 'active_model_serializers'
 gem 'activeadmin'
 
 gem 'arbre'
+
+gem 'sidekiq-scheduler'
 
 group :assets do
   gem 'sass-rails'

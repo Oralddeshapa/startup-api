@@ -14,7 +14,7 @@ RSpec.describe Api::V1::CommentsController, type: :controller do
             :text => 'Some text',
             :idea_id => idea.id,
           },
-          :id => idea.id
+          :idea_id => idea.id
         }
         expect(response.status).to eq(200)
       end

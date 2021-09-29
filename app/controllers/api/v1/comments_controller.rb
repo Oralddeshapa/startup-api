@@ -11,7 +11,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     @comment = current_user.comments.new(comment_params)
     @comment.idea_id = @idea.id
     if @comment.save
-      render :json => {}, status: 200
+      render :json => {comments: @idea.comments}, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end
@@ -24,10 +24,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
   private
 
   def attach_idea
-    @idea = Idea.find(params[:id])
+    @idea = Idea.find(params[:idea_id])
   end
 
   def comment_params
-    params.require(:comment).permit(:text, :id)
+    params.require(:comment).permit(:text, :idea_id)
   end
 end
