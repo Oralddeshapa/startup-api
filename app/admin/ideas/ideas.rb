@@ -1,5 +1,5 @@
 ActiveAdmin.register Idea do
-  permit_params :user_id, :title, :field, :region, :problem
+  permit_params :user_id, :title, :field, :region, :problem, :close_date
 
   form do |f|
     inputs "Details" do
@@ -8,6 +8,7 @@ ActiveAdmin.register Idea do
       input :problem
       input :field
       input :region
+      input :close_date, as: :datepicker, datepicker_options: { dateFormat: "mm/dd/yy" }
     end
     actions
   end
@@ -28,8 +29,15 @@ ActiveAdmin.register Idea do
       redirect_to request.fullpath
     end
 
+    def update
+      @idea = Idea.find(params[:id])
+      byebug
+      @idea.update(idea_params)
+      redirect_to request.fullpath
+    end
+
     def idea_params
-      permitted_params.require(:idea).permit(:user_id, :title, :problem, :field, :region)
+      permitted_params.require(:idea).permit(:user_id, :title, :problem, :field, :region, :close_date)
     end
   end
 

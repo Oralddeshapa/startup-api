@@ -3,7 +3,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def index
     if current_user.investor?
-      @ideas = Idea.all
+      @ideas = Idea.where(is_active: true)
     elsif current_user.creator?
       @ideas = current_user.ideas
     end
