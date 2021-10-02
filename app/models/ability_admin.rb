@@ -5,6 +5,7 @@ class AbilityAdmin
     user ||= User.new
     can :manage, :all
     can :create, :all
-    can :delet, :all 
+    can :delete, :all
+    can :update, :all
   end
 end

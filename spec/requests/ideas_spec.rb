@@ -42,7 +42,6 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
           :idea => {
             :title => Faker::Tea.variety,
             :problem => Faker::Lorem.paragraph,
-            :rating => rand(6),
             :region => Idea.regions.keys[rand(8)],
             :field => Idea.fields.keys[rand(6)],
           }
@@ -55,7 +54,6 @@ RSpec.describe Api::V1::IdeasController, type: :controller do
           :idea => {
             :title => Faker::Tea.variety,
             :problem => Faker::Lorem.paragraph,
-            :rating => rand(6),
             :region => Idea.regions.keys[rand(8)],
             :field => Idea.fields.keys[rand(6)],
           }

@@ -1,0 +1,6 @@
+:schedule:
+  active_work:
+    every: 1h
+    class: IdeaExpireWorker
+    queue: default
+    description: "Check for old ideas"
