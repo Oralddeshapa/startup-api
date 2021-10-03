@@ -29,13 +29,6 @@ ActiveAdmin.register Idea do
       redirect_to request.fullpath
     end
 
-    def update
-      @idea = Idea.find(params[:id])
-      byebug
-      @idea.update(idea_params)
-      redirect_to request.fullpath
-    end
-
     def idea_params
       permitted_params.require(:idea).permit(:user_id, :title, :problem, :field, :region, :close_date)
     end
