@@ -1,10 +1,9 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  #devise :database_authenticatable, :registerable,
-  #       :recoverable, :rememberable, :validatable
   has_many :ideas, dependent: :destroy
-  has_many :comments 
+  has_many :comments
+  has_many :ratings
+  has_many :views
+  has_many :interests
   enum role: [:creator, :investor, :admin]
   validates :email,
     length: { minimum: 8, maximum: 40 }

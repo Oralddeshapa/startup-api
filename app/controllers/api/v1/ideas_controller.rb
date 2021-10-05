@@ -3,7 +3,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def index
     if current_user.investor?
-      @ideas = Idea.where(is_active: true)
+      @ideas = Idea.where("close_date > ?", DateTime.now)
     elsif current_user.creator?
       @ideas = current_user.ideas
     end
@@ -18,18 +18,57 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def show
-    render json: @idea
+    if current_user.role == 'investor'
+      unless @idea.views.find_by(user_id: current_user.id)
+        @idea.views.create(user_id: current_user.id, idea_id: @idea.id)
+      end
+      subbed = @idea.interests.find_by(user_id: current_user.id) ? true : false
+      render :json => {
+                        idea: ActiveModelSerializers::SerializableResource.new(@idea),
+                        subbed: subbed
+                      }
+    else
+      render :json => { idea: ActiveModelSerializers::SerializableResource.new(@idea) }
+    end
   end
 
   def create
     @idea = Idea.new(idea_params)
     @idea.user_id = current_user.id
-    @idea.rating = 0
     @idea.close_date = Time.now + 30.days
     if @idea.save
+      #anounce()
       render :json => { id: @idea.id }, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
+    end
+  end
+
+  def subscribe
+    interest = @idea.interests.find_by(idea_id: @idea.id, user_id: current_user.id)
+    unless interest
+      interest = @idea.interests.new(idea_id: @idea.id, user_id: current_user.id)
+      if interest.save
+        render status: 200
+      else
+        render status: 400
+      end
+    else
+      interest.destroy
+      render status: 400
+    end
+  end
+
+  def unsubscribe
+    interest = @idea.interests.find_by(idea_id: @idea.id, user_id: current_user.id)
+    if interest
+      if interest.destroy
+        render status: 200
+      else
+        render status: 400
+      end
+    else
+      render status: 200
     end
   end
 
@@ -53,5 +92,25 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def idea_params
     params.require(:idea).permit(:title, :problem, :field, :region)
+  end
+
+  def anounce
+    users = User.where(role: 'investor')
+    users.each { |user|
+      #current_user
+      payload = {
+        :email => params[:email],
+        :password => params[:password],
+        :role => @user.role
+      }
+      user_token = Tokenizator.call(payload)
+      payload = {
+        :email => params[:email],
+        :password => params[:password],
+        :role => @user.role
+      }
+      #UserMailer.with(user: @user, url: url).succ_registered.deliver_later
+    }
+
   end
 end

@@ -14,14 +14,13 @@ class Api::V1::UsersController < Api::V1::ApiController
   def authorize
     @user = User.find_by(email: params[:email], password: params[:password])
     if @user
-      secret = Rails.application.credentials.jwt_token
       payload = {
         :email => params[:email],
         :password => params[:password],
         :role => @user.role
       }
-      token = JWT.encode payload, secret, 'HS256'
-      render :json => { role: @user.role, 
+      token = Tokenizator.call(payload)
+      render :json => { role: @user.role,
                         token: token,
                         username: @user.username }, status: 200
     else

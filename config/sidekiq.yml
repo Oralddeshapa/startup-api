@@ -1,6 +1,6 @@
 :schedule:
   active_work:
-    every: 30s
-    class: ActiveWorker
+    every: 1h
+    class: IdeaWorker
     queue: default
     description: "Check for old ideas"

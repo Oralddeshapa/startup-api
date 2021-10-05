@@ -282,6 +282,9 @@ GEM
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
+    sidekiq-cron (1.2.0)
+      fugit (~> 1.1)
+      sidekiq (>= 4.2.1)
     sidekiq-scheduler (3.1.0)
       e2mmap
       redis (>= 3, < 5)
@@ -336,10 +339,12 @@ DEPENDENCIES
   puma (~> 5.0)
   rack-cors
   rails (~> 6.1.4)
+  redis
   rspec-rails
   rubocop (~> 1.18.3)
   sass-rails
   sidekiq
+  sidekiq-cron
   sidekiq-scheduler
   spring
   tzinfo-data

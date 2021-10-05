@@ -1,7 +1,11 @@
-class ActiveWorker
+class AnnouncerWorker
   include Sidekiq::Worker
 
   def perform
+    send_notification(User.all)
+  end
+
+  def send_notification()
     ideas = Idea.where(is_active: true)
     ideas.each { |idea|
       if idea.close_date < Time.now
@@ -9,6 +13,5 @@ class ActiveWorker
         puts idea
       end
     }
-    puts 'checked for old ideas'
   end
 end
