@@ -8,6 +8,8 @@ class UserMailer < ApplicationMailer
 
  def new_idea_posted
    @user = params[:user]
+   @creator = params[:creator]
+   @idea = params[:idea]
    @url  = params[:url]
    mail(to: @user.email, subject: 'New idea was posted')
  end
