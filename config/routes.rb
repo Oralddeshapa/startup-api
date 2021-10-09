@@ -8,8 +8,12 @@ Rails.application.routes.draw do
       resources :ideas, :users, :comments
       post 'authorize' => "users#authorize"
       get 'get_fields' => "ideas#get_fields"
-      post 'ideas/:id/subscribe' => "ideas#subscribe"
-      post 'ideas/:id/unsubscribe' => "ideas#unsubscribe"
+      resources :ideas do
+        member do
+          post :subscribe
+          post :unsubscribe        
+        end
+      end
     end
   end
 end

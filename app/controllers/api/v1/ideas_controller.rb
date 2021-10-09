@@ -22,10 +22,9 @@ class Api::V1::IdeasController < Api::V1::ApiController
       unless @idea.views.find_by(user_id: current_user.id)
         @idea.views.create(user_id: current_user.id, idea_id: @idea.id)
       end
-      subbed = @idea.interests.find_by(user_id: current_user.id) ? true : false
       render :json => {
                         idea: ActiveModelSerializers::SerializableResource.new(@idea),
-                        subbed: subbed
+                        subbed: is_sub?(current_user)
                       }
     else
       render :json => { idea: ActiveModelSerializers::SerializableResource.new(@idea) }
@@ -37,7 +36,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.user_id = current_user.id
     @idea.close_date = Time.now + 30.days
     if @idea.save
-      anounce()
+      #anounce
       render :json => { id: @idea.id }, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
@@ -45,17 +44,11 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def subscribe
-    interest = @idea.interests.find_by(idea_id: @idea.id, user_id: current_user.id)
-    unless interest
-      interest = @idea.interests.new(idea_id: @idea.id, user_id: current_user.id)
-      if interest.save
-        render status: 200
-      else
-        render status: 400
-      end
+    interest = @idea.interests.find_or_initialize_by(idea_id: @idea.id, user_id: current_user.id)
+    if interest.save
+      head 200
     else
-      interest.destroy
-      render status: 400
+      head 400
     end
   end
 
@@ -63,12 +56,12 @@ class Api::V1::IdeasController < Api::V1::ApiController
     interest = @idea.interests.find_by(idea_id: @idea.id, user_id: current_user.id)
     if interest
       if interest.destroy
-        render status: 200
+        head 200
       else
-        render status: 400
+        head 400
       end
     else
-      render status: 200
+      head 200
     end
   end
 
@@ -84,6 +77,10 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.destroy
   end
 
+  def is_sub?(user)
+    @idea.interests.find_by(user_id: user.id) ? true : false
+  end
+
   private
 
   def set_idea
@@ -95,12 +92,10 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def anounce
-    byebug
     users = User.where(role: 'investor')
-    users.each { |user|
+    users.each do |user|
       url = ENV['FRONT_URL'] + '/ideas/' + @idea.id.to_s
       UserMailer.with(user: user, url: url, idea: @idea, creator: @idea.user).new_idea_posted.deliver_later
-    }
-
+    end
   end
 end

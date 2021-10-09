@@ -18,14 +18,12 @@ class IdeaSerializer < ActiveModel::Serializer
   end
 
   def subscribers
-    subs = []
-    @object.interests.each { |interest|
+    @object.interests.map { |interest|
       user = User.find_by(id: interest.user_id)
-      subs += [{
-         name: user.username,
-         mail: user.email
-        }]
+      {
+       name: user.username,
+       mail: user.email
+      }
     }
-    subs
   end
 end
