@@ -14,7 +14,7 @@ class IdeaSerializer < ActiveModel::Serializer
   end
 
   def rating
-    0
+    3
   end
 
   def subscribers
