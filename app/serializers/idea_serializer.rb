@@ -14,7 +14,14 @@ class IdeaSerializer < ActiveModel::Serializer
   end
 
   def rating
-    3
+    rate = 0.0
+    if object.ratings.count != 0
+      @object.ratings.each { |rating|
+        rate += rating.rating
+      }
+      rate /= @object.ratings.count
+    end
+    rate
   end
 
   def subscribers

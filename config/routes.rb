@@ -11,7 +11,8 @@ Rails.application.routes.draw do
       resources :ideas do
         member do
           post :subscribe
-          post :unsubscribe        
+          post :unsubscribe
+          post :rate     
         end
       end
     end
