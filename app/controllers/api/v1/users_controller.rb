@@ -36,11 +36,10 @@ class Api::V1::UsersController < Api::V1::ApiController
         #UserMailer.with(user: @user).succ_registered.deliver_later
         render :json => {}, status: 200
       else
-        render :json => { error: 'something went wrong pls try again' }, status: 422
+        render :json => { error: 'Something went wrong pls try again' }, status: 422
       end
-
     else
-      render json: { error: 'name or email has been taken' }, status: 400
+      render json: { error: 'Name or email has been taken' }, status: 400
     end
   end
 
