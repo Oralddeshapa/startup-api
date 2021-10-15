@@ -36,7 +36,7 @@ class Api::V1::IdeasController < Api::V1::ApiController
     @idea.user_id = current_user.id
     @idea.close_date = Time.now + 30.days
     if @idea.save
-      #anounce
+      anounce
       render :json => { id: @idea.id }, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
@@ -106,7 +106,13 @@ class Api::V1::IdeasController < Api::V1::ApiController
     users = User.where(role: 'investor')
     users.each do |user|
       url = ENV['FRONT_URL'] + '/ideas/' + @idea.id.to_s
-      #UserMailer.with(user: user, url: url, idea: @idea, creator: @idea.user).new_idea_posted.deliver_later
+      payload = {
+        :email => user.email,
+        :password => user.password,
+        :role => user.role
+      }
+      token = Tokenizator.call(payload)
+      UserMailer.with(user: user, url: url, idea: @idea, creator: @idea.user, token: token).new_idea_posted.deliver_later
     end
   end
 end
