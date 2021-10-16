@@ -25,12 +25,12 @@ class IdeaSerializer < ActiveModel::Serializer
   end
 
   def subscribers
-    @object.interests.map { |interest|
+    @object.interests.map do |interest|
       user = User.find_by(id: interest.user_id)
       {
        name: user.username,
        mail: user.email
       }
-    }
+    end
   end
 end
