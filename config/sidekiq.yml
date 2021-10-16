@@ -1,0 +1,6 @@
+:schedule:
+  active_work:
+    every: 30s
+    class: ActiveWorker
+    queue: default
+    description: "Check for old ideas"

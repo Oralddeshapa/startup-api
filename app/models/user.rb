@@ -4,6 +4,7 @@ class User < ApplicationRecord
   #devise :database_authenticatable, :registerable,
   #       :recoverable, :rememberable, :validatable
   has_many :ideas, dependent: :destroy
+  has_many :comments 
   enum role: [:creator, :investor, :admin]
   validates :email,
     length: { minimum: 8, maximum: 40 }
