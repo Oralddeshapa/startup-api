@@ -1,4 +1,4 @@
-class ActiveWorker
+class IdeaExpireWorker
   include Sidekiq::Worker
 
   def perform
@@ -6,9 +6,7 @@ class ActiveWorker
     ideas.each { |idea|
       if idea.close_date < Time.now
         idea.update(is_active: false)
-        puts idea
       end
     }
-    puts 'checked for old ideas'
   end
 end

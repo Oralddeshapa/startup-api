@@ -40,6 +40,10 @@ gem 'arbre'
 
 gem 'sidekiq-scheduler'
 
+gem 'redis'
+
+gem 'sidekiq-cron'
+
 group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
