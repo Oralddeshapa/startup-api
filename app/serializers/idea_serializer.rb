@@ -10,18 +10,12 @@ class IdeaSerializer < ActiveModel::Serializer
   end
 
   def views
-    @object.views.all.count()
+    @object.views.count()
   end
 
   def rating
-    rate = 0.0
-    if object.ratings.count != 0
-      @object.ratings.each { |rating|
-        rate += rating.rating
-      }
-      rate /= @object.ratings.count
-    end
-    rate
+    count = @object.ratings.count == 0 ? 1 : @object.ratings.count
+    @object.ratings.pluck(:rating).sum / count
   end
 
   def subscribers

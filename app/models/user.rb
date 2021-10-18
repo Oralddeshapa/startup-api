@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   has_many :ideas, dependent: :destroy
-  has_many :comments
+  has_many :comments, dependent: :destroy
   has_many :ratings
   has_many :views
   has_many :interests
