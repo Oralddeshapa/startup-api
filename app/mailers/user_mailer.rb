@@ -11,6 +11,7 @@ class UserMailer < ApplicationMailer
    @creator = params[:creator]
    @idea = params[:idea]
    @url  = params[:url]
+   @sub_link = ENV['FRONT_URL'] + '/subscribe/' + @idea.id.to_s + '/' + params[:token].to_s  
    mail(to: @user.email, subject: 'New idea was posted')
  end
 end

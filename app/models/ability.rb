@@ -14,7 +14,7 @@ class Ability
     end
     if user.investor?
       can :update, User
-      can [:read, :get_fields, :show, :subscribe, :unsubscribe], Idea
+      can [:read, :get_fields, :show, :subscribe, :unsubscribe, :rate], Idea
       can [:create], Comment
     end
   end

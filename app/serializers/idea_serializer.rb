@@ -10,20 +10,21 @@ class IdeaSerializer < ActiveModel::Serializer
   end
 
   def views
-    @object.views.all.count()
+    @object.views.count()
   end
 
   def rating
-    3
+    count = @object.ratings.count == 0 ? 1 : @object.ratings.count
+    @object.ratings.pluck(:rating).sum / count
   end
 
   def subscribers
-    @object.interests.map { |interest|
+    @object.interests.map do |interest|
       user = User.find_by(id: interest.user_id)
       {
        name: user.username,
        mail: user.email
       }
-    }
+    end
   end
 end
