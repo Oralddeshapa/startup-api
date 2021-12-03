@@ -3,24 +3,25 @@ class Api::V1::IdeasController < Api::V1::ApiController
 
   def index
     if current_user.investor?
-      @ideas = Idea.where("close_date > ?", DateTime.now)
+      #ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE "ideas"."id" = $#{params[:idea_id]}`)
+      @ideas = ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE (close_date > #{DateTime.now})`)
     elsif current_user.creator?
-      @ideas = current_user.ideas
+      @ideas = ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE "user_id" == #{current_user.id})`)
     end
     render json: @ideas
   end
 
   def get_fields
-    regions = Idea.regions.keys
-    fields = Idea.fields.keys
+    regions = [:EU, :RU, :ZA, :NA, :SA, :AU, :CN, :JP]
+    fields = [:science, :economy, :politics, :food, :service, :transport]
     render :json => { regions: regions,
                       fields: fields }, status: 200
   end
 
   def show
     if current_user.role == 'investor'
-      unless @idea.views.find_by(user_id: current_user.id)
-        @idea.views.create(user_id: current_user.id, idea_id: @idea.id)
+      unless ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE "user_id" == #{current_user.id} AND "idea_id" == #{@idea.id})`)
+        ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "views" VALUES(#{view_params.join(', ')})`)
       end
       render :json => {
                         idea: ActiveModelSerializers::SerializableResource.new(@idea),
@@ -32,10 +33,10 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def create
-    @idea = Idea.new(idea_params)
+    @idea = ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "ideas" VALUES(#{idea_params.join(', ')})`)
     @idea.user_id = current_user.id
     @idea.close_date = Time.now + 30.days
-    if @idea.save
+    if @idea
       #anounce
       render :json => { id: @idea.id }, status: 200
     else
@@ -44,8 +45,8 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def subscribe
-    interest = @idea.interests.find_or_initialize_by(idea_id: @idea.id, user_id: current_user.id)
-    if interest.save
+    interest = ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE "user_id" == #{current_user.id} AND "idea_id" == #{@idea.id})`)
+    if interest
       head 200
     else
       head 400
@@ -53,9 +54,9 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def unsubscribe
-    interest = @idea.interests.find_by(idea_id: @idea.id, user_id: current_user.id)
+    interest = ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE "user_id" == #{current_user.id} AND "idea_id" == #{@idea.id})`)
     if interest
-      if interest.destroy
+      if ActiveRecord::Base.conenction.exec_quert(` DELETE FROM "ideas" WHERE "ideas"."id" = #{interest.id}`)
         head 200
       else
         head 400
@@ -66,18 +67,29 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def rate
-    rating = @idea.ratings.find_by(idea_id: @idea.id, user_id: current_user.id)
+    rating = ActiveRecord::Base.conenction.exec_quert(`SELECT "ratings".* FROM "ratings" WHERE "user_id" == #{current_user.id} AND "idea_id" == #{@idea.id})`)
     unless rating
-      rating = @idea.ratings.create(idea_id: @idea.id, user_id: current_user.id, rating: params[:rating])
+      rating = ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "ideas" VALUES(#{@idea.id}, #{current_user.id}, #{rating})`)
       head 200
     else
-      rating.update(rating: params[:rating])
+      query = `UPDATE "ratings" SET `
+      rating_params.each do |param|
+        query += `"#{param.to_sym}" = #{param.value}, `
+      end
+      query += `WHERE "users"."id" = #{@user.id} AND "ideas"."id" = #{idea.id}`
+      update_complete = ActiveRecord::Base.conenction.exec_quert(query)
       head 200
     end
   end
 
   def update
-    if @idea.update(idea_params)
+    query = `UPDATE "ideas" SET `
+    rating_params.each do |param|
+      query += `"#{param.to_sym}" = #{param.value}, `
+    end
+    query += `WHERE "users"."id" = #{@user.id}`
+    update_complete = ActiveRecord::Base.conenction.exec_quert(query)
+    if update_complete
       render json: @idea
     else
       render json: @idea.errors, status: :unprocessable_entity
@@ -85,17 +97,17 @@ class Api::V1::IdeasController < Api::V1::ApiController
   end
 
   def destroy
-    @idea.destroy
+    ActiveRecord::Base.conenction.exec_quert(`DELETE FROM "ideas" WHERE "ideas"."id" = #{@idea.id}`)
   end
 
   def is_sub?(user)
-    @idea.interests.find_by(user_id: user.id) ? true : false
+    ActiveRecord::Base.conenction.exec_quert(`SELECT "interests".* FROM "interests" WHERE "user_id" == #{user.id} AND "idea_id" == #{@idea.id})`)
   end
 
   private
 
   def set_idea
-    @idea = Idea.find(params[:id])
+    ActiveRecord::Base.conenction.exec_quert(`DELETE FROM "ideas" WHERE "ideas"."id" = #{params[:id]}`)
   end
 
   def idea_params

@@ -3,7 +3,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   load_and_authorize_resource
 
   def index
-    @users = User.all
+    @users = ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users"`)
     render json: @users
   end
 
@@ -12,7 +12,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def authorize
-    @user = User.find_by(email: params[:email], password: params[:password])
+    @user = ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users" WHERE "users"."email" = $1 AND "users"."password" = $2`)
     if @user
       payload = {
         :email => params[:email],
@@ -29,10 +29,10 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def create
-    @user = User.find_by(email: params[:email]) || User.find_by(username: params[:username])
+    @user = ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users" WHERE "users"."email" = #{params[:email]}`)  || ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users" WHERE "users"."username" = #{params[:username]}`)
     unless @user
-      @user = User.new(user_params)
-      if @user.save
+      @user = ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "users" VALUES(#{user_params.join(', ')})`)
+      if @user
         #UserMailer.with(user: @user).succ_registered.deliver_later
         render :json => {}, status: 200
       else
@@ -44,7 +44,13 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def update
-    if @user.update(user_params)
+    query = `UPDATE "users" SET `
+    user_params.each do |param|
+      query += `"#{param.to_sym}" = #{param.value}, `
+    end
+    query += `WHERE "users"."id" = #{@user.id}`
+    update_complete = ActiveRecord::Base.conenction.exec_quert(query)
+    if update_complete
       render json: @user
     else
       render_errors(user)
@@ -52,13 +58,13 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def destroy
-    @user.destroy
+    ActiveRecord::Base.conenction.exec_quert(` DELETE FROM "ideas" WHERE "ideas"."id" = #{@user.id}`)
   end
 
   private
 
   def set_user
-    @user = User.find(params[:id])
+    @user = ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users" WHERE "users"."id" = #{params[:id]}`)
   end
 
   def user_params

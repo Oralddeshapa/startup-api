@@ -3,28 +3,27 @@ class Api::V1::CommentsController < Api::V1::ApiController
   before_action :attach_idea
 
   def index
-    @comments = @idea.comments
+    @comments = ActiveRecord::Base.conenction.exec_quert(`SELECT "comments".* FROM "comments" WHERE "idea_id" == #{@idea.id})`)
     render json: @comments
   end
 
   def create
-    @comment = current_user.comments.new(comment_params)
-    @comment.idea_id = @idea.id
-    if @comment.save
-      render :json => {comments: @idea.comments}, status: 200
+    @comment = ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "comments" VALUES(#{comment_params.join(', ')})`)
+    if comment
+      render :json => {comments: ActiveRecord::Base.conenction.exec_quert(`SELECT "comments".* FROM "comments" WHERE "idea_id" == #{@idea.id})`)}, status: 200
     else
       render :json => { error: 'something went wrong pls try again' }, status: 422
     end
   end
 
   def destroy
-    @comment.destroy
+    ActiveRecord::Base.conenction.exec_quert(` DELETE FROM "comments" WHERE "comments"."id" = #{@comment.id}`)
   end
 
   private
 
   def attach_idea
-    @idea = Idea.find(params[:idea_id])
+    @idea = ActiveRecord::Base.conenction.exec_quert(`SELECT "ideas".* FROM "ideas" WHERE "ideas"."id" = $#{params[:idea_id]}`)
   end
 
   def comment_params

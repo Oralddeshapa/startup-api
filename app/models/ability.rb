@@ -4,7 +4,6 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    user ||= User.new
     can [:authorize, :create], User
     can [:read], Comment
     if user.creator?

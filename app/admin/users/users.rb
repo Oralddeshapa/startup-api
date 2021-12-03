@@ -13,14 +13,15 @@ ActiveAdmin.register User do
 
   controller do
     def new
-      @user = User.new
+      @user = ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "users" VALUES(#{user_params.join(', ')})`)
     end
 
     def create
-      @user = User.find_by(email: permitted_params[:email]) || User.find_by(username: permitted_params[:username])
+      @user = ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users" WHERE "users"."email" = #{params[:email]}`)  || ActiveRecord::Base.conenction.exec_quert(`SELECT "users".* FROM "users" WHERE "users"."username" = #{params[:username]}`)
       unless @user
-        @user = User.new(user_params)
-        if @user.save
+        @user = ActiveRecord::Base.conenction.exec_quert(`INSERT INTO "users" VALUES(#{user_params.join(', ')})`)
+        if @user
+          #UserMailer.with(user: @user).succ_registered.deliver_later
           flash[:success] = "New User created."
         else
           flash[:success] = "New User createdn't."
